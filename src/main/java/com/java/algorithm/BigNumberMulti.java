@@ -8,85 +8,158 @@ public class BigNumberMulti {
     public static String ONE = "1";
 
     public static void main(String...args){
-        String a = "9999";
-        String b = "9999";
-        int[] arr = new int[a.length() + b.length()];
-        for (int i = 0; i < arr.length; i++){
-            arr[i] = 0;
-        }
-        bigAdd(a, b ,arr);
-        System.out.println(bigAdd(a, b ,arr));
+        String a = "12312878881231231313113131312423424234231231287888123123131311313131242342423423123128788812312313131131313124234242342312312878881231231313113131312423424234231231287888123123131311313131242342423423";
+        String b = "1231287888123123131311313131242342423423123128788812312313131131313124234242342312312878881231231313113131312423424234231231287888123123131311313131242342423423123128788812312313131131313124234242342312312878881231231313113131312423424234231231287888123123131311313131242342423423123128788812312313131131313124234242342312312878881231231313113131312423424234231231287888123123131311313131242342423423123128788812312313131131313124234242342312312878881231231313113131312423424234231231287888123123131311313131242342423423123128788812312313131131313124234242342312312878881231231313113131312423424234231231287888123123131311313131242342423423123128788812312313131131313124234242342312312878881231231313113131312423424234231231287888123123131311313131242342423423";
+        String res = calBigXWithDC(a, b);
+        System.out.println(res);
+        System.out.println(res.length());
+        String res1 = calBigX(a, b);
+        System.out.print(res.equals(res1));
 
     }
-    public static String calBigXYDC(String a, String b){
-        int[] arr = new int[a.length() + b.length()];
-        for (int i = 0; i < arr.length; i++){
-            arr[i] = 0;
-        }
-        return calBigXWithDC(a, b, arr);
-    }
-    public static String calBigXWithDC(String a, String b, int[] tempArr){
+    public static String sameLen(String x, String y){
+        if (x.length() >= y.length()) return x;
         StringBuilder sb = new StringBuilder();
-        if (a.equals(ZERO) || b.equals(ZERO) ) return ZERO;
-        if (a.equals(ONE)) return b;
-        if (b.equals(ONE)) return a;
-        if (a.length() == 1 && b.length() == 1){
-
+        for (int i = 0; i < y.length() - x.length(); i ++){
+            sb.append('0');
         }
+        sb.append(x);
         return sb.toString();
     }
-
-    public static String bigAdd(String a, String b, int[] tempArr){
-        int maxI = Math.min(a.length() - 1, b.length() - 1);
-        int fromLow = 0;
-        int j = tempArr.length - 1, i = 0;
-        for (; i <= maxI; i++){
-            int bita = a.charAt(a.length() - 1 - i) - '0';
-            int bitb = b.charAt(b.length() - 1 - i) - '0';
-            int add = bita + bitb + fromLow;
-            tempArr[j--] = add % 10;
-            fromLow = add / 10;
+    public static String calBigXWithDC(String a, String b){
+        boolean neg = false;
+        if (a.charAt(0) == '-' && b.charAt(0) != '-'){
+            neg = true;
+            a = a.substring(1);
+        }else if (b.charAt(0) == '-' && a.charAt(0) != '-'){
+            neg = true;
+            b = b.substring(1);
         }
-        if (a.length() != b.length()){
-            String c = a.length() > b.length()? a : b;
-            for (int k = c.length() - 1 - i; k >= 0; k--){
-                int bit = c.charAt(k) - '0';
-                int add = bit + fromLow;
-                tempArr[j--] = add % 10;
-                if (add >= 10){
-                    fromLow = add / 10;
-                }else {
-                    break;
-                }
+        a = sameLen(a, b);
+        b = sameLen(b, a);
+        int len = a.length();
+        if (len == 1){
+            return neg ? "-" + String.valueOf((a.charAt(0) - '0') * (b.charAt(0) - '0')) : String.valueOf((a.charAt(0) - '0') * (b.charAt(0) - '0'));
+        }
+        int mid = len / 2;
+        String x0 = a.substring(0, mid);
+        String y0 = b.substring(0, mid);
+        String x1 = a.substring(mid, len);
+        String y1 = b.substring(mid, len);
+        String z0 = calBigXWithDC(x0, y0);
+        String z2 = calBigXWithDC(x1, y1);
+        String z1 = bigSub(calBigXWithDC(bigAdd(x0, x1), bigAdd(y0, y1)), bigAdd(z0, z2));
+        String res = bigAdd(bigAdd(leftShiftX(z0, 2*(len - mid)), leftShiftX(z1, len - mid)), z2);
+        int k = 0;
+        while (k < res.length() && res.charAt(k) == '0'){
+            k++;
+        }
+        res = res.substring(k);
+        if (neg){
+            res = "-" + res;
+        }
+        return res;
+    }
+
+    public static String leftShiftX(String orig, int x){
+        StringBuilder sb = new StringBuilder();
+        if (orig != null && x > 0){
+            sb.append(orig);
+            while (x-- > 0){
+                sb.append('0');
             }
         }
-        tempArr[j] = fromLow;
-
-        StringBuilder sb = new StringBuilder();
-        int start = tempArr.length  - 1 - Math.max(a.length(), b.length());
-        if (tempArr[start] ==  0){
-            start++;
-        }
-        while (start < tempArr.length){
-            sb.append(tempArr[start]);
-            tempArr[start] = 0;
-            start++;
-        }
         return sb.toString();
     }
 
+    public static String bigSub(String a, String b){
+        if (a == null || a.length() == 0 ){
+            a = "0";
+        }
+        if (b == null || b.length() == 0){
+            b = "0";
+        }
+        if (a.charAt(0) == '-'){
+            if (b.charAt(0) == '-'){
+                return bigSub(b.substring(1), a.substring(1));
+            }else {
+                return "-" + bigAdd(b, a.substring(1));
+            }
+        }else {
+            if (b.charAt(0) == '-'){
+                return bigAdd(a, b.substring(1));
+            }
+        }
 
+        int lowBorrow = 0;
+        a = sameLen(a, b);
+        b = sameLen(b, a);
+        int i = 0;
+        boolean aBigger = false;
+        for (; i < a.length(); i++){
+            if (a.charAt(i) != b.charAt(i)){
+                aBigger = a.charAt(i) > b.charAt(i);
+                break;
+            }
+        };
+        if (i == a.length()){
+            return "0";
+        }
+        if (!aBigger){
+            return "-" + bigSub(b, a);
+        }
+        i = a.length() - 1;
+        int j = b.length() - 1;
+        StringBuilder sb = new StringBuilder();
+        for (;i >=0 && j >= 0; i--, j--){
+            int bita = a.charAt(i) - '0' - lowBorrow;
+            int bitb = b.charAt(j) - '0';
+            int bit = bita >= bitb ? bita - bitb : 10 + bita - bitb;
+            lowBorrow = bita >= bitb ? 0 : 1;
+            sb.insert(0, bit);
+        }
+        if (lowBorrow > 0){
+            int index = 0;
+            while (index < sb.length()  && sb.charAt(index) == '0'){
+                index++;
+            }
+            if (index == sb.length()){
+                return "0";
+            }else {
+                String str  = sb.substring(index);
+                sb.delete(0, sb.length());
+                sb.append("-");
+                sb.append(str);
+                return sb.toString();
+            }
+        }
+        return sb.toString();
+    }
+    /**
+     * 大数相加
+     * @param a
+     * @param b
+     * @return
+     */
+    public static String bigAdd(String a, String b){
+        int fromLow = 0;
+        a = sameLen(a, b);
+        b = sameLen(b, a);
+        StringBuilder sb = new StringBuilder();
+        int i = a.length() - 1, j = b.length() - 1;
+        for (;i >=0 && j >= 0; i--, j--){
+            int bita = a.charAt(i) - '0';
+            int bitb = b.charAt(j) - '0';
+            int add = bita + bitb + fromLow;
+            fromLow = add / 10;
+            sb.insert(0, add % 10);
+        }
+        if(fromLow > 0){
+            sb.insert(0, fromLow);
+        }
 
-
-
-
-
-
-
-
-
-
-
+        return sb.toString();
+    }
 
 
     //普通进位乘法
