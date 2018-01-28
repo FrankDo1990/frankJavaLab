@@ -19,29 +19,9 @@ public class Print {
 
         if (Strings.isNullOrEmpty(format)) return;
         if (args == null || args.length == 0) return;
+        for (Object obj : args){
+            format = format.replace("{}", String.valueOf(obj));
+        }
         System.out.println(format);
-        for (int h = 0 ; h < args.length; h++){
-            System.out.print(" " + args[h] + " ");
-        }
-        StringBuilder sb = new StringBuilder();
-        int index = 0, i = 0;
-        while (i < format.length()){
-            if (format.charAt(i) == '{' && i + 1 < format.length() && format.charAt(i+1) == '}' && index < args.length){
-                sb.append(String.valueOf(args[index]));
-                i = i + 2;
-                index++;
-            }else {
-                i++;
-            }
-        }
-        if (index < args.length){
-            sb.append("[");
-            for (i = index; i < args.length; i++){
-                sb.append(args[i]);
-                sb.append(",");
-            }
-            sb.append("]");
-        }
-        System.out.println(sb.toString());
     }
 }

@@ -1,6 +1,4 @@
-package com.java.statictest;
-
-import com.google.common.base.Splitter;
+package com.frank.statictest;
 
 import java.lang.management.ManagementFactory;
 

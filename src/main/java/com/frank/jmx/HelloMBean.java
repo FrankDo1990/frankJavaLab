@@ -1,4 +1,4 @@
-package com.java.jmx;
+package com.frank.jmx;
 
 /**
  *  

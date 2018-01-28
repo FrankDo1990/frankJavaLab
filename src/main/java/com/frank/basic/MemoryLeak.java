@@ -1,9 +1,6 @@
-package com.java.basic;
-
-import com.google.common.collect.Maps;
+package com.frank.basic;
 
 import java.util.HashMap;
-import java.util.WeakHashMap;
 import java.util.concurrent.Executors;
 
 /**

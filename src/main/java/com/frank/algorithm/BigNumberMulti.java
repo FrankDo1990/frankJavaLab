@@ -1,4 +1,4 @@
-package com.java.algorithm;
+package com.frank.algorithm;
 
 /**
  * Created by dufeng on 2017/6/9.

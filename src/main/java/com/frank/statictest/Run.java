@@ -1,11 +1,5 @@
-package com.java.statictest;
+package com.frank.statictest;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
-import org.jboss.netty.util.internal.StringUtil;
-
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
